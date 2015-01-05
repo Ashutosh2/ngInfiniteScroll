@@ -47,7 +47,7 @@ mod.directive('infiniteScroll', [
                                     totalHeight += $(this).height();
                                 });
 
-                                if(totalHeight<elem.get(0).scrollHeight){
+                                if(totalHeight<elem.height()){
                                     handler();
                                 }
                             },1000);
