@@ -27,13 +27,14 @@ mod.directive('infiniteScroll', [
                     });
                 }
 
-                handler = function () {
+                handler = function (lastHeight) {
                     var elementBottom, remaining, shouldScroll, windowBottom;
                     windowBottom = elem.get(0).scrollHeight;
                     elementBottom = elem.scrollTop() + elem.height() ;
 
                     remaining = windowBottom-elementBottom;
 
+                    console.log([elem.get(0),elem.get(0).scrollHeight, elem.scrollTop(), elem.height()]);
                     shouldScroll = remaining <= elem.height() * scrollDistance;
                     if (shouldScroll && scrollEnabled) {
                         if ($rootScope.$$phase) {
@@ -41,16 +42,19 @@ mod.directive('infiniteScroll', [
                         } else {
                             scope.$apply(attrs.infiniteScroll);
 
-                            $timeout(function(){
-                                var totalHeight = 0;
-                                elem.children().each(function(){
-                                    totalHeight += $(this).height();
-                                });
+//                            if(elem.get(0).scrollHeight<elem.height()){
+                                $timeout(function(){
+                                    var totalHeight = 0;
+                                    elem.children().each(function(){
+                                        totalHeight += $(this).outerHeight();
+                                    });
 
-                                if(totalHeight<elem.height()){
-                                    handler();
-                                }
-                            },1000);
+                                    console.log(totalHeight+'<'+elem.height());
+                                    if(totalHeight<elem.height() && typeof(totalHeight)!='undefined' && (typeof(lastHeight)=='undefined' || lastHeight < totalHeight)){
+                                        handler(totalHeight);
+                                    }
+                                },300);
+//                            }
                         }
                     } else if (shouldScroll) {
                         return checkWhenEnabled = true;
